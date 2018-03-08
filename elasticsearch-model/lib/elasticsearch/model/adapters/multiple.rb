@@ -27,6 +27,35 @@ module Elasticsearch
       module Multiple
         Adapter.register self, lambda { |klass| klass.is_a? Multimodel }
 
+        class << self
+          # Define a rule for mapping hits to models when searching across multiple models
+          #
+          # @param model_to_hit_selector [lambda(model,hit)] - Must return a boolean
+          #
+          # @example Map indices to models that operate against aliases
+          #
+          #     Elasticsearch::Model::Adapter::Multiple.model_to_hit_selector = lambda do |model, hit|
+          #       /#{model.index_name}-.*/ =~ hit[:_index] && model.document_type == hit[:_type]
+          #     end
+          #
+          # @example Map indices to models but disregard the model's index name
+          #
+          #     Elasticsearch::Model::Adapter::Multiple.model_to_hit_selector = lambda do |model, hit|
+          #       model.document_type == hit[:_type]
+          #     end
+          #
+          def model_to_hit_selector=(model_to_hit_selector)
+            @model_to_hit_selector = model_to_hit_selector
+          end
+
+          def model_to_hit_selector
+            @model_to_hit_selector ||= lambda do |model, hit|
+              (model.index_name == hit[:_index] && __no_type?(hit)) ||
+                (model.index_name == hit[:_index] && model.document_type == hit[:_type])
+            end
+          end
+        end
+
         module Records
           # Returns a collection of model instances, possibly of different classes (ActiveRecord, Mongoid, ...)
           #
@@ -113,8 +142,7 @@ module Elasticsearch
 
             @@__types[key] ||= begin
               Registry.all.detect do |model|
-                (model.index_name == hit[:_index] && __no_type?(hit)) ||
-                    (model.index_name == hit[:_index] && model.document_type == hit[:_type])
+                Elasticsearch::Model::Adapter::Multiple.model_to_hit_selector.call(model, hit)
               end
             end
           end
