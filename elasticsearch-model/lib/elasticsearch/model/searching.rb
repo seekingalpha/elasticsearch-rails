@@ -18,6 +18,7 @@ module Elasticsearch
         def initialize(klass, query_or_payload, options={})
           @klass   = klass
           @options = options
+          @client = options.delete(:client)
 
           __index_name    = options[:index] || klass.index_name
           __document_type = options[:type]  || klass.document_type
@@ -48,7 +49,11 @@ module Elasticsearch
         # @return [Hash] The response from Elasticsearch
         #
         def execute!
-          klass.client.search(@definition)
+          client.search(@definition)
+        end
+
+        def client
+          @client.nil? ? klass.client : @client
         end
       end
 
