@@ -142,7 +142,9 @@ module Elasticsearch
 
             @@__types[key] ||= begin
               Registry.all.detect do |model|
-                Elasticsearch::Model::Adapter::Multiple.model_to_hit_selector.call(model, hit)
+                selector =
+                  Elasticsearch::Model::Adapter::Multiple.model_to_hit_selector
+                instance_exec(model, hit, &selector)
               end
             end
           end
