@@ -236,7 +236,7 @@ You can also override the default configuration with options passed to the initi
 
 ```ruby
 client = Elasticsearch::Client.new(url: 'http://localhost:9250', log: true)
-client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
+client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
 repository = NoteRepository.new(client: client, index_name: 'notes_development')
 
 repository.create_index!(force: true)
@@ -267,7 +267,7 @@ The repository uses the standard Elasticsearch [client](https://github.com/elast
 ```ruby
 client = Elasticsearch::Client.new(url: 'http://search.server.org')
 repository = NoteRepository.new(client: client)
-repository.client.transport.transport.logger = Logger.new(STDERR)
+repository.client.transport.logger = Logger.new(STDERR)
 repository.client
 # => Elasticsearch::Client
 
@@ -345,7 +345,7 @@ repository.document_type
 ```
 
 The `klass` method specifies the Ruby class name to use when initializing objects from
-documents retrieved from the repository. If this value is not set, a Hash representation of the document will be 
+documents retrieved from the repository. If this value is not set, a Hash representation of the document will be
 returned instead.
 
 ```ruby
@@ -543,7 +543,7 @@ results.total
 # => 2
 
 # Access the raw response as a Hashie::Mash instance.
-# Note that a Hashie::Mash will only be created if the 'response' method is called on the results. 
+# Note that a Hashie::Mash will only be created if the 'response' method is called on the results.
 results.response._shards.failed
 # => 0
 
@@ -580,9 +580,9 @@ This software is licensed under the Apache 2 license, quoted below.
     the Apache License, Version 2.0 (the "License"); you may
     not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     	http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY

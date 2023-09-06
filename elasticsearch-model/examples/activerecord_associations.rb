@@ -81,7 +81,7 @@ end
 # ----- Elasticsearch client setup ----------------------------------------------------------------
 
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
-Elasticsearch::Model.client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
+Elasticsearch::Model.client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
 
 # ----- Search integration ------------------------------------------------------------------------
 
@@ -109,11 +109,11 @@ module Searchable
         indexes :department
       end
       indexes :comments, type: :object do
-        indexes :text 
+        indexes :text
       end
     end
   end
-    
+
     # Customize the JSON serialization for Elasticsearch
     def as_indexed_json(options={})
       self.as_json(
